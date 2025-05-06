@@ -1,0 +1,123 @@
+@mixin btn($class, $bgc, $fz: 16px) {
+    .btn-#{$class} {
+        background-color: $bgc;
+        color: $white;
+        font-size: $fz;
+        font-weight: $fw-bold;
+        border-radius: $border-r-1;
+        padding: 8px 16px 8px 16px;
+        border: 1px solid $bgc;
+        cursor: pointer;
+
+        &:hover {
+            background-color: darken($bgc, 10);
+            border: 1px solid darken($bgc, 10);
+        }
+    }
+}
+
+@mixin btn-l-icon($class, $bgc, $fz: 16px) {
+    .btn-l-icon-#{$class} {
+        background-color: $bgc;
+        color: $white;
+        font-size: $fz;
+        font-weight: $fw-bold;
+        border-radius: $border-r-1;
+        padding: 8px 16px 8px 16px;
+        border: 1px solid $bgc;
+        cursor: pointer;
+
+        &:hover {
+            background-color: darken($bgc, 10);
+            border: 1px solid darken($bgc, 10);
+        }
+
+        i {
+            margin-right: $sp-1;
+        }
+    }
+}
+
+@mixin btn-r-icon($class, $bgc, $fz: 16px) {
+    .btn-r-icon-#{$class} {
+        background-color: $bgc;
+        color: $white;
+        font-size: $fz;
+        font-weight: $fw-bold;
+        border-radius: $border-r-1;
+        padding: 8px 16px 8px 16px;
+        border: 1px solid $bgc;
+        cursor: pointer;
+
+        &:hover {
+            background-color: darken($bgc, 10);
+            border: 1px solid darken($bgc, 10);
+        }
+
+        i {
+            margin-left: $sp-1;
+        }
+    }
+}
+
+@mixin btn-outline($class, $color, $fz: 16px) {
+    .btn-outline-#{$class} {
+        background-color: transparent;
+        color: $color;
+        font-size: $fz;
+        font-weight: $fw-bold;
+        border-radius: $border-r-1;
+        padding: 8px 16px 8px 16px;
+        border: 1px solid $color;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $color;
+            color: $white;
+        }
+    }
+}
+
+@mixin btn-outline-l-icon($class, $color, $fz: 16px) {
+    .btn-outline-l-icon-#{$class} {
+        background-color: transparent;
+        color: $color;
+        font-size: $fz;
+        font-weight: $fw-bold;
+        border-radius: $border-r-1;
+        padding: 8px 16px 8px 16px;
+        border: 1px solid $color;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $color;
+            color: $white;
+        }
+
+        i {
+            margin-right: $sp-1;
+        }
+    }
+}
+
+@mixin btn-outline-r-icon($class, $color, $fz: 16px) {
+    .btn-outline-r-icon-#{$class} {
+        background-color: transparent;
+        color: $color;
+        font-size: $fz;
+        font-weight: $fw-bold;
+        border-radius: $border-r-1;
+        padding: 8px 16px 8px 16px;
+        border: 1px solid $color;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $color;
+            color: $white;
+        }
+
+        i {
+            margin-left: $sp-1;
+        }
+    }
+}

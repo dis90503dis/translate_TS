@@ -1,0 +1,112 @@
+// banner
+.articleinfo {
+    .articleinfo_banner {
+        position: relative;
+        width: 100%;
+        margin: auto;
+        object-fit:cover;
+        img {
+            height: 300px;
+            width: 100%;
+            object-fit:cover;
+        }
+        .banner_title {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            max-width: 800px;
+            max-height: 180px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            background-color: $banner-black;
+            transform: translate(-50%, -50%);
+            align-items: center;
+            h1 {
+                font-size: $h1;
+                color: $white;
+                display: inline-block;
+            }
+          }
+       }
+    }
+
+// articleinfo-container
+.articleinfo-container{
+    max-width: 996px;
+}
+.info{
+    .encoding {
+        // font-size: $fs-2;
+        margin-top: $sp-3*2;
+    }
+    .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center; 
+        // font-size: $h2;
+      
+        .font-controls {
+          button {
+            font-size: 1em; 
+            border: none;
+            background: $secondary;
+            margin: 0 5px;
+            width: 50px;
+            height: 50px;
+            &:hover{
+                background: $btn;
+                cursor: pointer;
+            }
+            @media (max-width:$md) {
+                margin: 5px 0;
+            }
+          }
+        }
+      }
+    .creation-time{
+        // font-size: $fs-2;
+        margin-bottom: $sp-3*2;
+        margin-top: $sp-2*2;
+    }
+}
+.article-main{
+    p{
+        margin: $sp-3 0;
+        // font-size: $fs-2;
+        @media (max-width: $md) {
+            font-size:$fs-4;
+        }
+    }
+    img{
+        width: 100%;
+        border-radius: 50px;
+        margin: $sp-2*2 0;
+    }
+}
+
+// tag-button
+.tag-button{
+    max-width: 996px;
+    margin: auto;
+    margin-bottom: $sp-3*2;
+    button {
+        background-color: $primary;
+        color: $white;
+        border: none;
+        border-radius: 50px;
+        font-size: $fs-2;
+        font-family: "Noto Sans TC", sans-serif;
+        width: 120px;
+        padding: 10px;
+        margin: 0 $sp-1;
+        margin-top: $sp-3;
+        @media (max-width: $md) {
+            font-size:$fs-3;
+            padding: 5px;
+            margin: 10px;
+            width: 100px;
+          }
+    }
+}

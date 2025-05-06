@@ -1,0 +1,51 @@
+.CartDetail{
+    background-color: #fff;
+    width: 100%;
+    &_title{
+        text-align: center;
+        padding: $sp-2;
+        font-size: $fs-3;
+        font-weight: $fw-bold;
+    }
+    &_product{
+        display: block;
+        height: 300px;
+        overflow-y: scroll;
+        &_productTr{
+            display: grid;
+            grid-template-columns: 30% 35% 20% 5%;
+        }
+        &_productTr:not(:last-child){
+            border-bottom: 2px dashed #000;
+        }
+        &_productTr>*{
+            padding: $sp-2 $sp-1;
+            align-self: center;
+        }
+        &_image{
+            width: 80px;
+            img{
+                width: 100%;
+                vertical-align: top;
+            }
+        }
+    }
+    &_amount{
+        width: 80%;
+        margin: 0 auto;
+        &_amountTr>*{
+            padding:5px  $sp-1;
+        }
+        &_amountTr:last-child{
+            border-top:1px solid #000 ;
+            font-size: $fs-2;
+        }
+        &_amountTh{
+            text-align: left;
+        }
+        &_amountTd{
+            text-align: right;
+        }
+    }
+
+}

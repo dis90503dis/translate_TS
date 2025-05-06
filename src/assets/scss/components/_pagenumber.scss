@@ -1,0 +1,40 @@
+.PageNumber {
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+
+    >a {
+        display: inline-block;
+        padding: 5px 10px;
+        text-decoration: none;
+        color: #E73F14;
+        border: 1px solid #E73F14;
+        border-radius: 50%;
+        margin-right: 10px;
+        font-weight: bold;
+        cursor: pointer;
+
+        &:hover {
+            color: #E73F14;
+        }
+
+        &.active {
+            background: #E73F14;
+            color: #fff;
+            border-color: #E73F14;
+        }
+
+        &.disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+
+            &:hover {
+                color: #333;
+            }
+        }
+    }
+
+    #nextpage, #prevpage{
+        border: none;
+    }
+}
