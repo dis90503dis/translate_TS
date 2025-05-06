@@ -1,0 +1,168 @@
+.about_banner{
+    width: 100%;
+    position: relative;
+	margin: auto;
+    img{
+        height: 200px;
+        width: 100%;
+        object-fit:cover;
+    }
+    .about_banner_textbackground{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 36px;
+        max-width: 800px;
+        width: 100%;
+        height: 180px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        background-color: $banner-black;
+        text-align: center;
+        h1{
+            color: $white;
+            font-size: 36px;
+            display: inline-block;
+            @media(width>=1200px){
+                font-size: 48px;
+            }
+        }
+    }
+}
+.about_countainer{
+    padding: 12px;
+    width: 100%;
+    margin: auto;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    @media(width>=576px){
+        gap: 40px;
+    }
+    @media(width>=1024px){
+        gap: 80px;
+    }
+    .about_health_helper, .about_health_column{
+        display: flex;
+        flex-direction: column;
+        max-width: 1000px;
+        @media(width>=576px){
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-top: auto;
+            gap: 20px;
+        }
+        @media(width>=1024px){
+            gap: 60px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            @media(width>=576px){
+                max-width: 300px;
+                margin-bottom: auto;
+            }
+            @media(width>=1024px){
+                max-width: 100%;
+            }
+        }
+    }
+}
+.about_health_helper_text, .about_health_column_text{
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    p{
+        padding: $sp-1;
+    }
+    a{
+        margin-left: auto;
+        margin-top: $sp-1;
+        margin-bottom: $sp-1;
+    }
+}
+
+.about_lunch_box{
+    width: 100%;
+    position: relative;
+    max-width: 800px;
+    max-height: 550px;
+    .lunch_box_pic01{
+        width: 100%;
+        max-width: 590px;
+        height: auto;
+    }
+    .lunch_box_pic02{
+        display: none;
+        @media(width>=576px){
+            width: 30%;
+            display: block;
+            height: auto;
+            position: absolute;
+            right: 0;
+            bottom: 20px;
+        }
+        @media(width>=768px){
+            width: 40%;
+            display: block;
+            height: auto;
+            position: absolute;
+            right: 0;
+            bottom: 20px;
+        }
+    }
+    .about_lunch_box_text{
+        margin-top: 10px;
+        max-width: 400px;
+        h3{
+            font-size: $fs-1;
+            @media(width>=1024px){
+                font-size: $h2;
+            }
+        }
+    }
+}
+
+.about_ingredients{
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    @media(width>=768px){
+        gap: 30px;
+    }
+    @media(width>=768px){
+    }
+    h2{
+        font-size: $fs-1;
+        color: $primary;
+        text-align: center;
+        @media(width>=768px){
+            font-size: $h2;
+        }
+    }
+    a{
+        margin: auto;
+        margin-top: $sp-1;
+        margin-bottom: $sp-3;
+    }
+}
+.about_ingredients_imgwall{
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content:space-around;
+    @media(width>=1024px){
+        flex-direction: row;
+    }
+    img{
+        max-width: 100%;
+        height: auto;
+        margin: 10px;
+    }
+}

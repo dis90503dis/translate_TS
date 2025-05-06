@@ -1,0 +1,27 @@
+.breadcrumb {
+    display: flex;
+    margin-top: $sp-2;
+    margin-bottom: $sp-2;
+
+    li {
+        margin-right: $sp-1;
+    }
+
+    li+li::before {
+        content: '/';
+        margin-right: 8px;
+        color: $dark-line;
+    }
+
+    a {
+        color: $dark-line;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &:last-child {
+        color: $primary;
+    }
+}
