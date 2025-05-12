@@ -170,30 +170,43 @@
         </div>
     </footer>
 </template>
-<script>
+
+
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-export default {
-    data() {
-        return {
-            targetValue: 0,
-            serviceModelStatus: false,
-            privicyModelStatus: false,
-        }
-    },
-    created() { },
-    methods: {
-        toggleServiceModel() {
-            this.serviceModelStatus = !this.serviceModelStatus
-        },
-        togglePrivacyModel() {
-            this.privicyModelStatus = !this.privicyModelStatus
-        }
-    },
-    components: {
-        RouterLink,
-    },
-}
+export default defineComponent({
+  name: 'MainFooter',
+  components: {
+    RouterLink,
+  },
+  setup() {
+    // 定義反應式資料及型別
+    const targetValue = ref<number>(0)  // 用來管理 targetValue，型別為 number
+    const serviceModelStatus = ref<boolean>(false)  // 用來管理服務條款顯示狀態，型別為 boolean
+    const privicyModelStatus = ref<boolean>(false)  // 用來管理隱私條款顯示狀態，型別為 boolean
+
+    // 方法定義
+    const toggleServiceModel = (): void => {
+      serviceModelStatus.value = !serviceModelStatus.value
+    }
+
+    const togglePrivacyModel = (): void => {
+      privicyModelStatus.value = !privicyModelStatus.value
+    }
+
+    // 返回要綁定的資料和方法
+    return {
+      targetValue,
+      serviceModelStatus,
+      privicyModelStatus,
+      toggleServiceModel,
+      togglePrivacyModel
+    }
+  }
+})
 </script>
+
 
 <style lang="scss">
 @import '@/assets/scss/main.scss';

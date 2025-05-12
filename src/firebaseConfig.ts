@@ -1,6 +1,14 @@
 import { initializeApp } from "firebase/app";
-
-const firebaseConfig = {
+interface FirebaseConfig {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+  measurementId: string;
+}
+const firebaseConfig:FirebaseConfig = {
     apiKey: "AIzaSyB1YjRZJlXJN_VfxbknaqeZaziX3Wd-U8U",
     authDomain: "healthy-food-53ebc.firebaseapp.com",
     projectId: "healthy-food-53ebc",

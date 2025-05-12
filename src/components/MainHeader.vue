@@ -297,105 +297,213 @@
         </div>
     </header>
 </template>
-<script>
-import { RouterLink } from 'vue-router';
+<script lang="ts">
+import { defineComponent, ref, computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import ShoppingCart from "@/components/ShoppingCart.vue"
-import axios from 'axios';
+import axios from 'axios'
 import { mapActions } from 'pinia'
-import { userStore } from '../stores/user.js'
-import { useCartStore } from '../stores/cart.js'
-import { computed } from 'vue';
-import { ref } from 'vue';
-import firebaseConfig from '../firebaseConfig';
-import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
+import { userStore } from '../stores/user'
+import { useCartStore } from '../stores/cart'
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 
-export default {
-    data() {
-        return {
-            targetValue: 0,
-            HeaderMenuStatus: false,
-            subMenuStatus: {
-                healthTools: false,
-                healthArticles: false,
-            },
-            modalStatus: false,
-            isLogin: true,
-            isDown: false,
-            isLoggedIn: false,
-            user: {
-                memId: '',
-                memPsw: '',
-            },
-            isMemberList: false,
-            passwordVisible: false,
-            locations: [],
-            citys: [],
-            newUser: {
-                name: '',
-                tel: '',
-                email: '',
-                au4a83: '',
-                au4a83again: '',
-                county: '',
-                city: '',
-                addr: ''
-            },
-            cartItemCount: 0, // 初始化購物車數量為 0
-            member: {},
-            data: null,
-            user: {},
+interface User {
+  memId: string
+  memPsw: string
+}
+
+interface NewUser {
+  name: string
+  tel: string
+  email: string
+  au4a83: string
+  au4a83again: string
+  county: string
+  city: string
+  addr: string
+}
+
+export default defineComponent({
+  data() {
+    return {
+      targetValue: 0,
+      HeaderMenuStatus: false,
+      subMenuStatus: {
+        healthTools: false,
+        healthArticles: false,
+      },
+      modalStatus: false,
+      isLogin: true,
+      isDown: false,
+      isLoggedIn: false,
+      user: {
+        memId: '',
+        memPsw: '',
+      } as User,
+      isMemberList: false,
+      passwordVisible: false,
+      locations: [] as any[],
+      citys: [] as any[],
+      newUser: {
+        name: '',
+        tel: '',
+        email: '',
+        au4a83: '',
+        au4a83again: '',
+        county: '',
+        city: '',
+        addr: ''
+      } as NewUser,
+      cartItemCount: 0,
+      member: {} as any,
+      data: null,
+    }
+  },
+  created() {
+    const store = userStore()
+      // 監控 pinia 中的 showLoginModal，若變更為 true，則開啟登入彈窗
+    this.$watch(
+      () => store.showLoginModal,
+      (newValue) => {
+        if (newValue === true) this.toggleModal()
+      }
+    )
+    store.checkLogin()
+        .then(user => {
+            if (user) {
+                this.member = store.userData
+                this.isLoggedIn = true
+            } else {
+                this.isLoggedIn = false
+            }
+        })
+        .catch(err => {
+            this.isLoggedIn = false
+        })
+
+    const cart = useCartStore()
+    this.cartItemCount = computed(() => cart.count)
+  },
+  methods: {
+    toggleHeaderMenu() {
+        this.HeaderMenuStatus = !this.HeaderMenuStatus
+    },
+    toggleSubMenu(subMenuName: string) {
+        this.subMenuStatus[subMenuName] = !this.subMenuStatus[subMenuName]
+    },
+    toggleModal() {
+        this.modalStatus = !this.modalStatus
+    },
+    toggleLogin(isLogin: boolean) {
+        this.isLogin = isLogin
+    },
+    toggleShoppingDrawer() {
+        (this.$refs.shoppingCartRef as any).toggleShoppingDrawer()
+    },
+    toggleSignupDown() {
+        this.isDown = !this.isDown
+        this.modalStatus = false
+        this.toggleLogin(true)
+        this.newUser = {
+            name: '',
+            tel: '',
+            email: '',
+            au4a83: '',
+            au4a83again: '',
+            county: '',
+            city: '',
+            addr: ''
         }
     },
-    created() {
-        const store = userStore();
-
-        //監控pinia中的showLoginModal，如果有變動(true)就打開登入燈箱
-        this.$watch(
-            () => store.showLoginModal,
-            (newValue) => {
-                if (newValue === true) {
-                    this.toggleModal();
-                }
-            });
-        store.checkLogin()
-            .then(user => {
-                if (user) {
-                    this.member = store.userData;
-                    this.isLoggedIn = true;
+    closeSignupDown() {
+        this.isDown = false
+    },
+    logIn(e: Event) {
+        // 阻止表單默認行為
+        e.preventDefault()
+        const store = userStore()
+        axios({
+            method: 'post',
+            url: `${import.meta.env.VITE_API_URL}/front/member/front_login.php`,
+            data: this.user,
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        })
+            .then(res => {
+                const data = res.data
+                if (data.status === 'success') {
+                    alert('登入成功')
+                    this.user.memId = ''
+                    this.user.memPsw = ''
+                    this.modalStatus = false
+                    this.isLoggedIn = true
+                    store.updateToken(data.member.member_no)
+                    store.updateUserData(data.member)
+                    this.member = store.userData
+                } else if (data.status === 'fail') {
+                    alert(data.message)
+                    this.user.memId = ''
+                    this.user.memPsw = ''
                 } else {
-                    this.isLoggedIn = false;
+                    alert('帳號或密碼錯誤')
                 }
             })
             .catch(err => {
-                this.isLoggedIn = false;
-            });
-
-
-        const cart = useCartStore();
-        this.cartItemCount = computed(() => {
-            return cart.count;
-        });
+                console.log(err)
+            })
     },
-    methods: {
-        toggleHeaderMenu() {
-            this.HeaderMenuStatus = !this.HeaderMenuStatus
-        },
-        toggleSubMenu(subMenuName) {
-            this.subMenuStatus[subMenuName] = !this.subMenuStatus[subMenuName]
-        },
-        toggleModal() {
-            this.modalStatus = !this.modalStatus;
-        },
-        toggleLogin(isLogin) {
-            this.isLogin = isLogin;
-        },
-        toggleShoppingDrawer() {
-            this.$refs.shoppingCartRef.toggleShoppingDrawer()
-        },
-        toggleSignupDown() {
-            this.isDown = !this.isDown;
-            this.modalStatus = false;
-            this.toggleLogin(true);
+    toggleMemList() {
+        this.isMemberList = !this.isMemberList
+    },
+    logOut() {
+        const store = userStore()
+        store.clearToken()
+        const CartStore = useCartStore()
+        CartStore.cartList.splice(0)
+        this.member = {}
+        this.isLoggedIn = false
+        this.$router.push('/')
+    },
+    togglePasswordVisibility() {
+        this.passwordVisible = !this.passwordVisible
+    },
+    getLocations() {
+        axios.get('https://tibamef2e.com/chd104/g3/front/taiwan_districts.json')
+            .then(res => {
+                this.locations = res.data
+                this.onCityChange()
+            })
+            .catch(err => console.log('讀取區域資料時發生錯誤:', err))
+    },
+    handleCountyChange(event: Event) {
+        const countyName = (event.target as HTMLSelectElement).value
+        const location = this.locations.find(loc => loc.name === countyName)
+        if (location) {
+            this.citys = location.districts
+        } else {
+            this.citys = []
+        }
+    },
+    registerUser(e: Event) {
+      if (!this.validateFormData()) {
+          return
+      } else {
+        e.preventDefault()
+        axios({
+          method: 'post',
+          url: `${import.meta.env.VITE_API_URL}/front/member/front_signup.php`,
+          data: this.newUser,
+          headers: {
+              'Content-Type': 'application/json'
+          }
+        })
+        .then(res => {
+          if (res && res.data && res.data.msg === '註冊成功') {
+            this.toggleSignupDown()
+          } else {
+            alert(res.data.msg)
             this.newUser = {
                 name: '',
                 tel: '',
@@ -405,209 +513,100 @@ export default {
                 county: '',
                 city: '',
                 addr: ''
-            };
-        },
-        closeSignupDown() {
-            this.isDown = false;
-        },
-        logIn(e) {
-            //阻止表單默認行為
-            e.preventDefault();
-            const store = userStore();
-            axios({
-                method: 'post',
-                url: `${import.meta.env.VITE_API_URL}/front/member/front_login.php`,
-                data: this.user,
-                withCredentials: true, // 確保跨域請求時能夠發送 cookies（如果您的身份驗證機制依賴於此）
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
+            }
+          }
+        })
+        .catch(err => {
+            console.log(err)
+          })
+      }
+    },
+    validateFormData() {
+      const telPattern = /^0\d{9}$/
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/
+      if (!this.newUser.name) {
+        alert('姓名不能為空')
+        return false
+      } else if (this.newUser.tel === '') {
+        alert('電話號碼不能為空')
+        return false
+      } else if (!this.newUser.tel || !telPattern.test(this.newUser.tel)) {
+        alert('請輸入有效的電話號碼')
+        return false
+      } else if (this.newUser.email === '') {
+        alert('電⼦郵件不能為空')
+        return false
+      } else if (!this.newUser.email || !emailPattern.test(this.newUser.email)) {
+        alert('電⼦郵件格式不正確')
+        return false
+      } else if (!this.newUser.au4a83 || !passwordPattern.test(this.newUser.au4a83) || this.newUser.au4a83 !== this.newUser.au4a83again) {
+        alert(this.newUser.au4a83 !== this.newUser.au4a83again ? '請確認是否輸入相同密碼' : '密碼格式不正確，應為6-12位英數字混合')
+        return false
+      } else if (this.newUser.county === '') {
+        alert('縣市不能爲"選擇縣市"')
+        return false
+      } else if (this.newUser.city === '') {
+        alert('鄉鎮不能爲"選擇鄉鎮"')
+        return false
+      } else if (!this.newUser.addr) {
+        alert('地址不能為空')
+        return false
+      } else {
+        return true
+      }
+    },
+    getImageUrl(paths: string) {
+      return new URL(`${import.meta.env.VITE_IMAGES_BASE_URL}/member/${paths}`, import.meta.url).href
+    },
+    googleLogin(event: Event) {
+      event.preventDefault()
+      const store = userStore()
+      const auth = getAuth()
+      const googleProvider = new GoogleAuthProvider()
+      signInWithPopup(auth, googleProvider)
+        .then((result) => {
+          const userName = result.user.displayName
+          const userEmail = result.user.email
+          axios.post(`${import.meta.env.VITE_API_URL}/front/member/googleLogin.php`, {
+            member_email: userEmail,
+            member_name: userName
+          }, {
+            headers: { "Content-Type": "multipart/form-data" }
+          })
+            .then((res) => {
+              if (res.data.status === 'success') {
+                alert('登入成功')
+                const data = res.data
+                this.modalStatus = false
+                this.isLoggedIn = true
+                store.updateToken(data.member.member_no)
+                store.updateUserData(data.member)
+                this.member = store.userData
+              } else if (res.data.status === 'fail') {
+                  alert(res.data.message)
+              }
             })
-                .then(res => {
-                    const data = res.data;
-                    if (data.status === 'success') {
-                        alert('登入成功');
-                        //清空輸入格的字
-                        this.user.memId = '';
-                        this.user.memPsw = '';
-                        //關閉燈箱
-                        this.modalStatus = false;
-                        //換大頭貼
-                        this.isLoggedIn = true;
-                        store.updateToken(data.member.member_no); // 將會員no利用pinia放入localStorage
-                        store.updateUserData(data.member);//將會員資料放入pinia中
-                        this.member = store.userData;
-                    } else if (data.status === 'fail') {
-                        alert(data.message);
-                        this.user.memId = '';
-                        this.user.memPsw = '';
-                    } else {
-                        alert('帳號或密碼錯誤');
-                    }
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-        },
-        toggleMemList() {
-            this.isMemberList = !this.isMemberList;
-        },
-        logOut() {
-            const store = userStore();
-            store.clearToken(); //pinia 清空localStorage
-            const CartStore = useCartStore(); //清空購物車
-            CartStore.cartList.splice(0);
-            this.member = {};
-            this.isLoggedIn = false;
-            this.$router.push('/'); //跳轉回首頁
-        },
-        togglePasswordVisibility() {
-            this.passwordVisible = !this.passwordVisible;
-        },
-        getLocations() {
-
-            axios.get('https://tibamef2e.com/chd104/g3/front/taiwan_districts.json')
-                .then(res => {
-                    this.locations = res.data;
-                    this.onCityChange();
-                })
-                .catch(err => console.log('讀取區域資料時發生錯誤:', err))
-
-
-        },
-        handleCountyChange(event) {
-            const countyName = event.target.value;
-            const location = this.locations.find(loc => loc.name === countyName);
-            if (location) {
-                this.citys = location.districts;
-            } else {
-                this.citys = [];
-            }
-        },
-        registerUser(e) {
-            if (!this.validateFormData()) {
-                return;
-            } else {
-                e.preventDefault();
-                axios({
-                    method: 'post',
-                    url: `${import.meta.env.VITE_API_URL}/front/member/front_signup.php`,
-                    data: this.newUser,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                    .then(res => {
-                        if (res && res.data && res.data.msg === '註冊成功') {
-                            this.toggleSignupDown();
-                        } else {
-                            alert(res.data.msg);
-                            this.newUser = {
-                                name: '',
-                                tel: '',
-                                email: '',
-                                au4a83: '',
-                                au4a83again: '',
-                                county: '',
-                                city: '',
-                                addr: ''
-                            };
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    })
-            }
-        },
-        validateFormData() {
-            // 手機號碼正則表達式
-            const telPattern = /^0\d{9}$/;
-            // email正則表達式
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            // 密碼正則表達式
-            const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,12}$/;
-
-            if (!this.newUser.name) {
-                alert('姓名不能為空');
-                return false;
-            } else if (this.newUser.tel === '') {
-                alert('電話號碼不能為空');
-                return false;
-            } else if (!this.newUser.tel || !telPattern.test(this.newUser.tel)) {
-                alert('請輸入有效的電話號碼');
-                return false;
-            } else if (this.newUser.email === '') {
-                alert('電⼦郵件不能為空');
-                return false;
-            } else if (!this.newUser.email || !emailPattern.test(this.newUser.email)) {
-                alert('電⼦郵件格式不正確');
-                return false;
-            } else if (!this.newUser.au4a83 || !passwordPattern.test(this.newUser.au4a83) || this.newUser.au4a83 !== this.newUser.au4a83again) {
-                alert(this.newUser.au4a83 !== this.newUser.au4a83again ? '請確認是否輸入相同密碼' : '密碼格式不正確，應為6-12位英數字混合');
-                return false;
-            } else if (this.newUser.county === '') {
-                alert('縣市不能爲"選擇縣市"');
-                return false;
-            } else if (this.newUser.city === '') {
-                alert('鄉鎮不能爲"選擇鄉鎮"');
-                return false;
-            } else if (!this.newUser.addr) {
-                alert('地址不能為空');
-                return false;
-            } else {
-                return true
-            }
-        },
-        getImageUrl(paths) {
-            return new URL(`${import.meta.env.VITE_IMAGES_BASE_URL}/member/${paths}`, import.meta.url).href;
-        },
-        googleLogin(event) {
-            event.preventDefault();
-            const store = userStore();
-            const auth = getAuth();
-            const googleProvider = new GoogleAuthProvider();
-            signInWithPopup(auth, googleProvider)
-                .then((result) => {
-                    const userName = result.user.displayName;
-                    const userEmail = result.user.email;
-                    axios.post(`${import.meta.env.VITE_API_URL}/front/member/googleLogin.php`, {
-                        member_email: userEmail,
-                        member_name: userName
-                    }, {
-                        headers: { "Content-Type": "multipart/form-data" }
-                    })
-                        .then((res) => {
-                            if (res.data.status === 'success') {
-                                alert('登入成功');
-                                const data = res.data;
-                                this.modalStatus = false;
-                                this.isLoggedIn = true;
-                                store.updateToken(data.member.member_no); // 將會員no利用pinia放入localStorage
-                                store.updateUserData(data.member);//將會員資料放入pinia中
-                                this.member = store.userData;
-                            } else if (res.data.status === 'fail') {
-                                alert(res.data.message);
-                            }
-                        })
-                        .catch((error) => {
-                            console.error(error);
-                        });
-                })
-                .catch((error) => {
-                    console.error("登入失敗:", error);
-                });
-        },
-    },
-    components: {
-        RouterLink,
-        ShoppingCart,
-        mapActions,
-        useCartStore,
-    },
-}
+            .catch((error) => {
+                console.error(error)
+            })
+        })
+        .catch((error) => {
+            console.error("登入失敗:", error)
+        })
+    }
+  },
+  components: {
+    RouterLink,
+    ShoppingCart,
+    mapActions,
+    useCartStore
+  }
+})
 </script>
+
 
 <style lang="scss">
 @import '@/assets/scss/main.scss';
 @import "@/assets/scss/layout/_header.scss";
-</style>../firebaseConfig.js/index.js
+</style>
