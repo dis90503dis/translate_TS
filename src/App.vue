@@ -1,21 +1,26 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
-  <header>
-
-    <div class="wrapper">
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <MainHeader />
+  <!-- 頁面路由route渲染的地方 -->
+  <RouterView :key="$route.params.id" />
+  <MainFooter />
 </template>
 
-<style scoped>
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { RouterLink, RouterView } from 'vue-router';
+import MainHeader from '@/components/MainHeader.vue';
+import MainFooter from '@/components/MainFooter.vue';
+
+export default defineComponent({
+  components: {
+    RouterLink,
+    RouterView,
+    MainHeader,
+    MainFooter,
+  }
+});
+</script>
+
+<style lang="scss">
+@import "@/assets/scss/main.scss";
 </style>
